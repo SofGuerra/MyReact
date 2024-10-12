@@ -5,7 +5,6 @@ const Header: React.FC = () => {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showViewMenu, setShowViewMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [isFilesMenuVisible, setFilesMenuVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +14,6 @@ const Header: React.FC = () => {
     setShowSettingsMenu((prev) => !prev);
     setShowViewMenu(false);
     setShowSaveMenu(false);
-    setShowLoginPopup(false);
     setFilesMenuVisible(false);
   };
 
@@ -23,7 +21,6 @@ const Header: React.FC = () => {
     setShowViewMenu((prev) => !prev);
     setShowSettingsMenu(false);
     setShowSaveMenu(false);
-    setShowLoginPopup(false);
     setFilesMenuVisible(false);
   };
 
@@ -31,7 +28,6 @@ const Header: React.FC = () => {
     setShowSaveMenu((prev) => !prev);
     setShowSettingsMenu(false);
     setShowViewMenu(false);
-    setShowLoginPopup(false);
     setFilesMenuVisible(false);
   };
 
@@ -40,15 +36,6 @@ const Header: React.FC = () => {
     setShowSettingsMenu(false);
     setShowViewMenu(false);
     setShowSaveMenu(false);
-    setShowLoginPopup(false);
-  };
-
-  const toggleLoginPopup = () => {
-    setShowLoginPopup((prev) => !prev);
-    setShowSettingsMenu(false);
-    setShowViewMenu(false);
-    setShowSaveMenu(false);
-    setFilesMenuVisible(false);
   };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -69,7 +56,6 @@ const Header: React.FC = () => {
 
     console.log('Sending request with body:' + JSON.stringify({"username": username, "password": password}));
 
-    setShowLoginPopup(false);
     setUsername('');
     setPassword('');
     setErrorMessage('');
@@ -129,35 +115,8 @@ const Header: React.FC = () => {
         />
       </div>
 
-      <button className="login-button" onClick={toggleLoginPopup}>Login</button>
-      {showLoginPopup && (
-        <div className="popup">
-          <h3>Login</h3>
-          <form onSubmit={handleLoginSubmit} className="login-form">
-            <div className="form-group">
-              <label htmlFor="username">Username:</label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            {errorMessage && <p className="error">{errorMessage}</p>}
-            <button type="submit" className="submit-button">Login</button>
-          </form>
-          <button className="close-button" onClick={toggleLoginPopup}>Close</button>
-        </div>
-      )}
+      <button className="login-button" onClick={() => {}}>Login</button>
+      
     </div>
   );
 };
