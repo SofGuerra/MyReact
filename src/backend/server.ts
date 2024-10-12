@@ -29,6 +29,8 @@ app.get('/api/auth', (req, res) => {
 
   const signedToken = jwt.sign({username: "UsernameAleksei"}, secret_key, { expiresIn: "30m" })
 
+  //im happy
+
   jwt.verify(signedToken, secret_key, (err, user) => {
 
     console.debug("Decoded: " + err + " " + JSON.stringify(user));
