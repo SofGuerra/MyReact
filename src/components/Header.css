@@ -1,0 +1,236 @@
+
+
+.header {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+    align-items: center; /* Center vertically */
+    padding: 10px 20px; /* Padding for the header */
+    background-color: #444; /* Background color */
+    color: rgb(0, 0, 0); /* Text color */
+    position: fixed; /* Fixed positioning */
+    top: 0; /* Align at the top */
+    left: 0; /* Align at the left */
+    right: 0; /* Align at the right to cover full width */
+    z-index: 1000; /* Ensure it stays above other elements */
+  }
+  
+  .header-buttons button {
+    margin-right: 15px; /* Space between buttons */
+    padding: 8px 12px; /* Button padding */
+    background-color: #666; /* Button background */
+    color: white; /* Button text color */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer cursor on hover */
+  }
+  
+  .login-button {
+    background-color: #007bff; /* Login button color */
+    padding: 8px 12px; /* Button padding */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer cursor on hover */
+  }
+  
+  /* Popup and Menu styles */
+  .popup, .menu {
+    position: absolute; /* Position relative to the header */
+    top: 50px; /* Below the header */
+    left: 20px; /* Align with buttons */
+    padding: 10px;
+    color: rgb(0, 0, 0); /* Text color */
+    background-color: white; /* Background for popups */
+    border: 1px solid #ddd; /* Light border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+  
+  .popup h3, .menu h3 {
+    margin-top: 0; /* Remove top margin for headings */
+  }
+  
+  .menu {
+    left: 150px; /* Adjust for view and save buttons */
+  }
+  
+  
+  .popup {
+    position: fixed; /* Change to fixed positioning */
+    top: 50%; /* Position at 50% from the top */
+    left: 50%; /* Position at 50% from the left */
+    transform: translate(-50%, -50%); /* Center it by offsetting half its width and height */
+    padding: 20px; /* Adjust padding for better spacing */
+    background-color: white; /* Background for popups */
+    border: 1px solid #ddd; /* Light border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .form-group input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 10px;
+  }
+  
+  .submit-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .submit-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .close-button {
+    background-color: #ccc;
+    color: black;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .close-button:hover {
+    background-color: #999;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #444;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  .files-button {
+    background-color: #007bff;
+    padding: 8px 12px;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .sidebar-menu {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    z-index: 10;
+  }
+  
+  .sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar-menu li {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .sidebar-menu li:hover {
+    background-color: #f0f0f0;
+  }
+  
+
+  /* Existing styles for header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #444;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.header-buttons button {
+  margin-right: 15px;
+  padding: 8px 12px;
+  background-color: #666;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.files-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.menu {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  padding: 10px;
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu li:hover {
+  background-color: #f0f0f0;
+}

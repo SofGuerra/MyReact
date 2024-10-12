@@ -9,7 +9,10 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api': 'http://localhost:5000', // Proxy API requests to your Express server
+      '/api': {
+        target:'http://localhost:5000', // Proxy API requests to your Express server
+        
+      } 
     },
     port: 3000, // Port for Vite
   },

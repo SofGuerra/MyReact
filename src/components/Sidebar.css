@@ -1,0 +1,22 @@
+.sidebar {
+    width: 200px;
+    height: 100vh; /* Full height of the viewport */
+    background-color: #333; /* Dark background */
+    color: white; /* White text */
+    padding: 20px; /* Some padding */
+    position: fixed; /* Fixed positioning on the left */
+    left: 0;
+    top: 0;
+    border-right: 2px solid #444; /* Light border on the right */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5); /* Optional shadow for depth */
+  }
+  
+  .home-container {
+    display: flex; /* Flex container */
+  }
+  
+  .content {
+    margin-left: 220px; /* Margin to prevent overlap with sidebar */
+    padding: 20px; /* Some padding for content */
+  }
+  
