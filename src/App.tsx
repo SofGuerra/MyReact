@@ -10,7 +10,7 @@ import { response } from 'express'
 function App() {
   const [count, setCount] = useState(0)
 
-  
+  const userCount = await fetch()
 
 return (
   <Router>
