@@ -1,11 +1,37 @@
 import React, { useState } from 'react';
-import './Header.css';
+import "./Login.css"
 
 const Login: React.FC = () => {
     return (
-        <div>Hello from login page</div>
-    )
-}
+      <div>
+        <div className = "container">
+          <img src=".\images\Жоски кот.jpg" alt="Profile Photo" />
+          |<h3>varible de nombre</h3>
+          <hr></hr>
+        </div>
+
+      <div className="infoSection">
+        <h3>Profile Info</h3>
+        <p>Nombre:</p>
+        <p>Fecha de nacimiento: </p>
+        <p>Clients: </p>
+        <p>Money earned:  </p>
+
+      </div>
+
+      <div className="chartSection">
+       
+      </div>
+      <div className="rightChartSection">
+        <h3>Additional Info</h3>
+        <p>This space can be used for another chart or any other info.</p>
+      </div>
+
+
+
+      </div>
+    );
+};
 
 export default Login;
 

@@ -2,28 +2,37 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import axios from 'axios';
+import FirstRegister from './FirstRegister';
 import './Home.css';
 
 
 
 const Home: React.FC = () => {
   const [data, setData] = useState([]);
-
+  const [count, setCount] = useState<number | null>(null);
+  
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/CASTIGO_AGOSTO_2024');
-        setData(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+    fetch("/api/usersNb", {
+      method: "GET",
+      headers: {'Content-Type': "application/json"}
+    })
+    .then(res => res.json()
+    .then(body => setCount(body.usersnb)));
+  }, [count]);
+  
 
   return (
-    <div className="home-container">
+    <>
+      {count === null && "error"}
+      {count === 0 && (
+        <div>
+          <FirstRegister />
+        </div>
+      )}
+      {count !== null && count > 0 && "Page with profile or login"}
+    </>
+  );
+    /*
       <Sidebar />
       <div className="content">
         <Header />
@@ -65,6 +74,8 @@ const Home: React.FC = () => {
       </div>
     </div>
   );
+  */
+
 };
 
 export default Home;
