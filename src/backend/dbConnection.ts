@@ -2,66 +2,6 @@ import sql from 'mssql';
 import * as fs from 'fs';
 
 
-/*
-
-var TestConfig = {  
-    server: 'localhost',  //update me
-    authentication: {
-        type: 'default',
-        options: {
-            userName: 'sa', //update me
-            password: 'sysadm'  //update me
-        }
-    },
-    options: {
-        // If you are on Microsoft Azure, you need encryption:
-        encrypt: false,
-        database: 'pargol',  //update me
-        port: 1433,
-    }
-};  
-var connection = new TestConn(TestConfig);  
-connection.on('connect', function(err) {  
-    executeStatement();
-    
-});
-
-connection.connect();
-
-var Request = require('tedious').Request;  
-var TYPES = require('tedious').TYPES;  
-
-function executeStatement() {  
-    var request = new Request("SELECT * from [CASTIGO AGOSTO 2024]", function(err) {  
-    if (err) {  
-        console.log(err);}  
-    });  
-    var result = "";  
-    request.on('row', function(columns) {  
-        columns.forEach(function(column) {  
-          if (column.value === null) {  
-            console.log('NULL');  
-          } else {  
-            result+= column.value + " ";  
-          }  
-        });  
-        console.log(result);  
-        result ="";  
-    });  
-
-    request.on('done', function(rowCount, more) {  
-    console.log(rowCount + ' rows returned');  
-    });  
-    
-    // Close the connection after the final event emitted by the request, after the callback passes
-    request.on("requestCompleted", function (rowCount, more) {
-        connection.close();
-    });
-    connection.execSql(request);  
-}  
-
-*/
-
 const config = {
     user: 'sa',
     password: 'sysadm',
@@ -70,7 +10,7 @@ const config = {
     database: 'pargol',
     options: {
       trustServerCertificate: true,
-      encrypt: true,
+      encrypt: false,
     }
   };
 
@@ -105,6 +45,19 @@ class ConnectionProvider {
     }
 
     private async createTablesIfNotExist() {
+
+        let executeCreationStatement = async (query: string, objectName: string) => {
+            try {
+                await this.connection?.query(query);
+            } catch (err) {
+                if (err instanceof sql.RequestError && err.code === 'EREQUEST'
+                    && err.message.includes(`There is already an object named '${objectName}'`)) {
+                } else {
+                    throw err;
+                }
+            }
+        }
+
         let usersTable = `
             CREATE TABLE users  (
                 name VARCHAR(64),
@@ -121,18 +74,34 @@ class ConnectionProvider {
                     CONSTRAINT user_type_check CHECK (type = 'ADMIN' OR type = 'NORMAL')
             );
         `;
-        
-        try {
-            await this.connection?.query(usersTable);
-        } catch (err) {
-            if (err instanceof sql.RequestError && err.code === 'EREQUEST'
-                && err.message.includes("There is already an object named 'users'")) {
-            } else {
-                throw err;
-            }
-        }
-        
+        executeCreationStatement(usersTable, 'users');
+
+        let usersTablesTable = `
+            CREATE TABLE users_tables  (
+                table_name VARCHAR(64),
+                    CONSTRAINT users_tables_table_name_NE CHECK (table_name != ''),
+                    CONSTRAINT users_tables_table_name_NN CHECK (table_name IS NOT NULL),
+                    CONSTRAINT users_tables_table_name_pk PRIMARY KEY (table_name)
+            );
+        `;
+        executeCreationStatement(usersTablesTable, 'users_tables');
+
+        let usersColumnsTable = `
+            CREATE TABLE users_columns  (
+                table_name VARCHAR(64),
+                column_name VARCHAR(64),
+                column_type VARCHAR(64) NOT NULL,
+                    CONSTRAINT users_columns_column_name_NE CHECK (column_name != ''),
+                    CONSTRAINT users_columns_column_name_NN CHECK (column_name IS NOT NULL),
+                    CONSTRAINT users_columns_pk PRIMARY KEY (table_name, column_name)
+            );
+        `;
+        executeCreationStatement(usersColumnsTable, 'users_columns');
+
+        console.debug("Tables tried to create");
     }
+
+    
 
     public async createUser(name: string, username: string, hashedPassword: string, passwordSalt: string, type: string = "NORMAL")
     {

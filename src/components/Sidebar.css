@@ -6,6 +6,7 @@
   padding: 15px; 
   position: fixed; 
   top: 22px; 
+  resize: horizontal;
 }
 
   

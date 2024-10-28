@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './Loginform.css';
 import '@fortawesome/fontawesome-free/css/all.css';
+import Validations from "../validations";
 
 interface LoginProps {
   setUsersCount: React.Dispatch<React.SetStateAction<number | null>>; // Adjust type if count is not a number
@@ -21,22 +21,26 @@ const FirstRegister: React.FC<LoginProps> = ({setUsersCount}) => {
   let submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     
-
-    if (username == "")
+    let errorMessage = "";
+    errorMessage = Validations.validateUsername(username);
+    if (errorMessage != "")
     {
-      setErrorMessage("Enter valid username")
+      setErrorMessage(errorMessage)
       return;
     }
 
-
-    if (password == "" || password.length < 8) {
-      setErrorMessage("The password should have at least 8 characters");
+    errorMessage = Validations.validatePassword(password);
+    if (errorMessage != "")
+    {
+      setErrorMessage(errorMessage)
       return;
     }
-    else if(password !== confirmPassword )
-      {setErrorMessage("Password does not match");
-       return;
-      }
+
+    if(password !== confirmPassword)
+    {
+      setErrorMessage("Passwords do not match");
+      return;
+    }
 
     fetch("/api/firstReg", {
       method: "POST",
