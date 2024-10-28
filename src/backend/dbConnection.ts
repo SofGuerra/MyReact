@@ -1,5 +1,7 @@
 import sql from 'mssql';
 import * as fs from 'fs';
+
+
 /*
 
 var TestConfig = {  
@@ -72,7 +74,11 @@ const config = {
     }
   };
 
-class InvalidArgumentException extends Error {
+ 
+
+
+class InvalidArgumentException extends Error 
+{
 }
 
 
@@ -109,7 +115,8 @@ class ConnectionProvider {
                     CONSTRAINT user_username_pk PRIMARY KEY (username),
                     CONSTRAINT user_username_NE CHECK (username != ''),
                     CONSTRAINT user_username_NN CHECK (username IS NOT NULL),
-                password VARCHAR(255),                    -- Password for hashed passwords, using 255 characters for safety
+                password VARCHAR(255),
+                password_salt VARCHAR(255),
                 type VARCHAR(32),
                     CONSTRAINT user_type_check CHECK (type = 'ADMIN' OR type = 'NORMAL')
             );
@@ -127,14 +134,14 @@ class ConnectionProvider {
         
     }
 
-    public async createUser(name: string, username: string, hashedPassword: string, type: string = "NORMAL")
+    public async createUser(name: string, username: string, hashedPassword: string, passwordSalt: string, type: string = "NORMAL")
     {
         if (! await this.createConnectionIfNotExists()) return;
                 
         try {
 
-            await this.connection?.query("INSERT INTO USERS ([name], [username], [password], [type]) "
-                +   `values ('${name}', '${username}', '${hashedPassword}', '${type}')`
+            await this.connection?.query("INSERT INTO USERS ([name], [username], [password], [password_salt], [type]) "
+                +   `values ('${name}', '${username}', '${hashedPassword}', '${passwordSalt}', '${type}')`
                 );
 
         }
@@ -165,6 +172,18 @@ class ConnectionProvider {
             let result = await this.connection?.query("SELECT COUNT(*) as user_count FROM USERS");
             return parseInt(result?.recordset[0].user_count); 
         } catch (err) {
+            throw err;
+        }
+    }
+    
+    public async fetchCastigoData(): Promise<any[]> {
+        if (!await this.createConnectionIfNotExists()) return [];
+
+        try {
+            const result = await this.connection?.query("SELECT * FROM [CASTIGO AGOSTO 2024]");
+            return result?.recordset || [];
+        } catch (err) {
+            console.error("Error fetching CASTIGO AGOSTO 2024 data:", err);
             throw err;
         }
     }

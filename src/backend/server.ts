@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 import cors from 'cors';
-
+import bcrypt from "bcrypt";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -56,18 +56,22 @@ app.get('/api/auth', (req, res) => {
 
 
 
-
-/*
-app.post("api/first_reg", (req, res) => {
-  const userCount = ConnectionProvider.GetNumberOfUsers();
-  userCount.then(count => )
+app.post("/api/firstReg", async (req, res) => {
+  const userCount = await ConnectionProvider.GetNumberOfUsers();
+  if (userCount == 0) {
+    const username = req.body.username;
+    const password = req.body.password;
+    const displayName = "admin";
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    await ConnectionProvider.createUser(displayName, username, hashedPassword, salt, "ADMIN");
+    res.json({success: true});
+  } else {
+    res.json({success: false});
+  }
 });
-*/
 
 app.get("/api/usersNb", (req, res) => {
-
-  console.debug("Get usernb")
-
  ConnectionProvider.GetNumberOfUsers().then((usersnb : number) => {
     res.json({usersnb : usersnb})
   });
@@ -77,5 +81,6 @@ app.get("/api/usersNb", (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
 
 export {app} ;

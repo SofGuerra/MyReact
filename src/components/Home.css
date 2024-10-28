@@ -6,13 +6,17 @@ table {
   th, td {
     border: 1px solid #ddd;
     padding: 8px;
+    
   }
   
   th {
     background-color: #e1e1e1;
   }
   .content {
-    margin-top: 60px; /* Adjust this value based on the height of your header */
+    margin-top: realtive; /* Adjust this value based on the height of your header */
     padding: 20px; /* Optional: Add padding for better spacing */
+  }
+  body{
+    font-size: medium ;
   }
   

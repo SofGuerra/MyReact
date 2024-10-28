@@ -1,81 +1,85 @@
-
-
 .header {
-    display: flex;
-    justify-content: space-between; /* Space between buttons */
-    align-items: center; /* Center vertically */
-    padding: 10px 20px; /* Padding for the header */
-    background-color: #444; /* Background color */
-    color: rgb(0, 0, 0); /* Text color */
-    position: fixed; /* Fixed positioning */
-    top: 0; /* Align at the top */
-    left: 0; /* Align at the left */
-    right: 0; /* Align at the right to cover full width */
-    z-index: 1000; /* Ensure it stays above other elements */
-  }
-  
+  padding: 0px 0px;
+  background-color: #eaeaea;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  font-size: smaller;
+  display: flex;
+  justify-content: space-between; /* Space between elements */
+  align-items:end /* Vertically center elements */
+}
+
   .header-buttons button {
-    margin-right: 15px; /* Space between buttons */
-    padding: 8px 12px; /* Button padding */
-    background-color: #666; /* Button background */
-    color: white; /* Button text color */
+    margin-right: 1px; /* Space between buttons */
+    color: rgb(0, 0, 0); /* Button text color */
     border: none; /* Remove border */
     cursor: pointer; /* Pointer cursor on hover */
+  }
+
+  .header-buttons button:hover
+  {background-color: #a5a5a5;  }
+
+  .login-button {
+    color: rgb(0, 0, 0); /* Text color */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer cursor on hover */
+    /*transition: background-color 0.3s;*/
+    align-self: flex-end;
+  }
+
+  .login-button:hover
+  {background-color: #779ec8;}
+
+  .menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
   
-  .login-button {
-    background-color: #007bff; /* Login button color */
-    padding: 8px 12px; /* Button padding */
-    color: white; /* Text color */
-    border: none; /* Remove border */
-    cursor: pointer; /* Pointer cursor on hover */
+  .menu li {
+    list-style: none;
+    padding: 0px;
+    cursor: pointer;
   }
+  
+  .menu li:hover {
+    background-color: #f0f0f0;
+  }
+  
+
+.menu {
+  position: fixed; /* Position relative to the header */
+    top: 22.4%; 
+    left: 50%;
+    padding: 7px;
+    transform: translate(-60%, -50%);
+    color: rgb(0, 0, 0); /* Text color */
+    background-color: white; /* Background for popups */
+    border: 1px solid #ddd; /* Light border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    border-radius: "10px";
+    z-index: 10;
+}
+
   
   /* Popup and Menu styles */
-  .popup, .menu {
-    position: absolute; /* Position relative to the header */
-    top: 50px; /* Below the header */
-    left: 20px; /* Align with buttons */
-    padding: 10px;
+  .popup{
+    position: fixed; /* Position relative to the header */
+    top: 50%; 
+    left: 50%;
+    padding: 20px;
+    transform: translate(-50%, -50%);
     color: rgb(0, 0, 0); /* Text color */
     background-color: white; /* Background for popups */
     border: 1px solid #ddd; /* Light border */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
-    z-index: 10; /* Ensure it appears above other elements */
-  }
-  
-  .popup h3, .menu h3 {
-    margin-top: 0; /* Remove top margin for headings */
-  }
-  
-  .menu {
-    left: 150px; /* Adjust for view and save buttons */
-  }
-  
-  
-  .popup {
-    position: fixed; /* Change to fixed positioning */
-    top: 50%; /* Position at 50% from the top */
-    left: 50%; /* Position at 50% from the left */
-    transform: translate(-50%, -50%); /* Center it by offsetting half its width and height */
-    padding: 20px; /* Adjust padding for better spacing */
-    background-color: white; /* Background for popups */
-    border: 1px solid #ddd; /* Light border */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
-    z-index: 10; /* Ensure it appears above other elements */
-  }
-  .popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    background-color: white;
-    border: 1px solid #ddd;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: "10px";
     z-index: 10;
   }
-  
+    
   .login-form {
     display: flex;
     flex-direction: column;
@@ -109,12 +113,18 @@
     border: none;
     cursor: pointer;
     border-radius: 4px;
+    font-weight: 500;
   }
   
   .submit-button:hover {
     background-color: #0056b3;
   }
+
+
+
   
+  /*para cerrar la equisita*/
+
   .close-button {
     background-color: #ccc;
     color: black;
@@ -126,32 +136,12 @@
   }
   
   .close-button:hover {
-    background-color: #999;
+    background-color: #f3edf2;
   }
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #444;
-    color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-  }
-  
-  .files-button {
-    background-color: #007bff;
-    padding: 8px 12px;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
+
   
   .sidebar-menu {
-    position: absolute;
+    position: relative;
     top: 50px;
     right: 20px;
     background-color: white;
@@ -177,60 +167,4 @@
   }
   
 
-  /* Existing styles for header */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #444;
-  color: white;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-}
-
-.header-buttons button {
-  margin-right: 15px;
-  padding: 8px 12px;
-  background-color: #666;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.files-button {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  cursor: pointer;
-}
-
-.menu {
-  position: absolute;
-  top: 50px;
-  left: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  padding: 10px;
-}
-
-.menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu li {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.menu li:hover {
-  background-color: #f0f0f0;
-}
+  

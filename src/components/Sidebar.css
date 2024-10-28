@@ -1,15 +1,13 @@
 .sidebar {
-    width: 200px;
-    height: 100vh; /* Full height of the viewport */
-    background-color: #333; /* Dark background */
-    color: white; /* White text */
-    padding: 20px; /* Some padding */
-    position: fixed; /* Fixed positioning on the left */
-    left: 0;
-    top: 0;
-    border-right: 2px solid #444; /* Light border on the right */
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5); /* Optional shadow for depth */
-  }
+  width: 250px;
+  height: 100vh; 
+  background-color: #828b8e; 
+  color: rgb(234, 234, 234); 
+  padding: 15px; 
+  position: fixed; 
+  top: 22px; 
+}
+
   
   .home-container {
     display: flex; /* Flex container */

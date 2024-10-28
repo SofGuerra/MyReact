@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
+import Login from './components/Profile';
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 
@@ -14,6 +15,7 @@ return (
   <Router>
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/TestLogin" element={<Login />} />
     </Routes>
   </Router>
 );

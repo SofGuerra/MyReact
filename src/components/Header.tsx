@@ -6,9 +6,7 @@ const Header: React.FC = () => {
   const [showViewMenu, setShowViewMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [isFilesMenuVisible, setFilesMenuVisible] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+
 
   const toggleSettingsMenu = () => {
     setShowSettingsMenu((prev) => !prev);
@@ -38,28 +36,7 @@ const Header: React.FC = () => {
     setShowSaveMenu(false);
   };
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
 
-    e.preventDefault();
-    if (!username || !password) {
-      setErrorMessage('Username and password are required.');
-      return;
-    }
-
-    const response = await fetch('/api', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({"username": username, "password": password})
-    });
-
-    console.log('Sending request with body:' + JSON.stringify({"username": username, "password": password}));
-
-    setUsername('');
-    setPassword('');
-    setErrorMessage('');
-  };
 
   // Handle file selection (for "Add a database")
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,36 +48,55 @@ const Header: React.FC = () => {
   };
 
   return (
+    
     <div className="header">
-      <div className="header-buttons">
+       <div className="header-buttons">
         <button onClick={toggleSettingsMenu}>Settings</button>
         {showSettingsMenu && (
-          <div className="menu settings-menu">
-            <h3>Settings Menu</h3>
-          </div>
+          <div className="menu">
+          <ul>
+          <li>View all users</li>
+          <hr></hr>
+          <li>More options...</li>
+          </ul>
+        </div>
         )}
 
         <button onClick={toggleViewMenu}>View</button>
         {showViewMenu && (
-          <div className="menu view-menu">
-            <h3>View Menu</h3>
+          <div className="menu">
+            <ul>
+            <li>Hide Sidebar</li>
+            <hr></hr>
+            <li>another option</li>
+            <hr></hr>
+            <li>option optionosa</li>
+          </ul>
           </div>
         )}
 
         <button onClick={toggleSaveMenu}>Save</button>
         {showSaveMenu && (
-          <div className="menu save-menu">
-            <h3>Save Menu</h3>
-          </div>
+          <div className="menu">
+          <ul>
+            <li onClick={() => document.getElementById('file-input')?.click()}>Save as</li>
+            <hr></hr>
+            <li>Save</li>
+            <hr></hr>
+            <li onClick={() => document.getElementById('file-input')?.click()}>Save copy</li>
+          </ul>
+        </div>
         )}
 
         {/* New Files Button */}
         <button className="files-button" onClick={toggleFilesMenu}>Files</button>
         {isFilesMenuVisible && (
-          <div className="menu files-menu">
+          <div className="menu">
             <ul>
               <li onClick={() => document.getElementById('file-input')?.click()}>Add a database</li>
-              <li>Visualize database</li>
+              <hr></hr>
+              <li>Visualize databases</li>
+              <hr></hr>
               <li>Remove database</li>
             </ul>
           </div>
@@ -113,9 +109,10 @@ const Header: React.FC = () => {
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
+
       </div>
 
-      <button className="login-button" onClick={() => {}}>Login</button>
+      <button className="login-button" onClick={() => {}}>Profile</button>
       
     </div>
   );
