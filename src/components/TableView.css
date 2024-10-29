@@ -1,0 +1,39 @@
+/* DataTableStyles.css */
+
+/* Estilo para el contenedor de la tabla */
+.tableview1 {
+    padding: 20px;
+    background-color: #f9f9f9; /* Color de fondo del contenedor */
+  }
+  
+  /* Estilo para la cabecera de la tabla */
+  .rdt_TableHeader {
+    background-color: #007bff; /* Color de fondo de la cabecera */
+    color: white; /* Color del texto de la cabecera */
+  }
+  
+  /* Estilo para las filas de la tabla */
+  .rdt_TableBody {
+    background-color: white; /* Color de fondo de las filas */
+  }
+  
+  .rdt_TableBody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo para filas pares */
+  }
+  
+  /* Estilo para las celdas de entrada */
+  .rdt_TableBody input {
+    width: 100%; /* Ancho completo de la celda */
+    padding: 8px; /* Espaciado interno */
+    border: 1px solid #ccc; /* Borde de la celda */
+    border-radius: 4px; /* Bordes redondeados */
+    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
+  }
+  
+  /* Estilo para el título de la tabla */
+  .rdt_Table {
+    
+    border: 1px solid #ccc; /* Borde alrededor de la tabla */
+    border-radius: 4px; /* Bordes redondeados de la tabla */
+    overflow: hidden; /* Para evitar que el contenido se desborde */
+  }

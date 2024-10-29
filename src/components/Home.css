@@ -13,10 +13,15 @@ table {
     background-color: #e1e1e1;
   }
   .content {
-    margin-top: realtive; /* Adjust this value based on the height of your header */
-    padding: 20px; /* Optional: Add padding for better spacing */
+    flex-grow: 1;
+    padding: 20px; 
+    background-color: pink;/* TEMPORAL */
   }
   body{
     font-size: medium ;
+  }
+
+  .home-container{
+    height: 100vh;
   }
   

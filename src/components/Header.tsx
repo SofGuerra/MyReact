@@ -7,7 +7,6 @@ const Header: React.FC = () => {
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [isFilesMenuVisible, setFilesMenuVisible] = useState(false);
 
-const toggle
 
 
   const toggleSettingsMenu = () => {

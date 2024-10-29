@@ -1,5 +1,7 @@
 import sql from 'mssql';
 import * as fs from 'fs';
+import { ColumnHeaders, TableHeaders } from '../TableHeaders';
+import validations from '../validations';
 
 
 const config = {
@@ -156,6 +158,69 @@ class ConnectionProvider {
             throw err;
         }
     }
+
+    public async GetUserTableHeaders(tableName : string) : Promise<any> {
+        if (validations.validateTableName(tableName) != "") {
+            throw new InvalidArgumentException(`Tried to create a table with name '${tableName}' in the database layer `);
+        };
+
+        try {
+            const result = await this.connection?.query(`SELECT column_name, column_type FROM users_columns WHERE table_name = '${tableName}'`);
+            let headers = new TableHeaders(tableName);
+            result?.recordset.forEach(row => {
+                let columnHeaders = new ColumnHeaders();
+                columnHeaders.name = row.column_name;
+                columnHeaders.type = row.column_type;
+                if (validations.validateUserColumnType(row.column_type) != "") {
+                    throw new InvalidArgumentException(`Received wrong column type '${row.column_type}' for the column '${row.column_name}' from the database for the user table '${tableName}'`);
+                }
+                headers.columns.push(columnHeaders)
+            });
+            return headers;
+
+        } catch (err) {
+            console.log(`${new Date().toLocaleString()} | Cannot get headers of the user table '${tableName}' from the database.`);
+            console.log(err);
+            return null;
+        }
+
+    }
+
+    public async GetDataFromUserTable(tableName: string, columnsNames: string[]) : Promise<any> {
+
+        try {
+            
+            if (validations.validateTableName(tableName) != "") {
+                throw new InvalidArgumentException("Invalid table name");
+            }
+
+            let headers = await this.GetUserTableHeaders(tableName);
+            if (headers == null) return null;
+
+            let trueColumnsNames = (headers as TableHeaders).columns.map(c => c.name.toLowerCase());
+
+            columnsNames.forEach(columnName => {
+                let validationError = validations.validateUserColumnName(columnName);
+                if (validationError != "" || !trueColumnsNames.includes(columnName)) {
+                    throw new InvalidArgumentException(`Invalid column '${columnName}': ` + validationError);
+                }
+            })
+            
+            // Will look like `id, [client_name], [debt]`
+            let columnsNamesRequest = "id, ";
+            columnsNames.forEach(column => columnsNamesRequest += "[" + column + "], ");
+            columnsNamesRequest = columnsNamesRequest.slice(0, columnsNamesRequest.length - 2);
+
+            let request = `SELECT id, ${columnsNames.join(", ")} from [${tableName}]`;
+            let queryResult = await this.connection?.query(request);
+            return queryResult?.recordset;
+        } catch (err) {
+            console.log(`${new Date().toLocaleString()} | Cannot get columns ${columnsNames} of the user table '${tableName}' from the database.`);
+            console.log(err);
+            return null;
+        }
+    }
+
 
 }
 

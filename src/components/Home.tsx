@@ -1,64 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import ConnectionProvider from '../backend/dbConnection';
-import Sidebar from './Sidebar';
-import Header from './Header';
-import FirstRegister from './FirstRegister';
-import TableView from './TableView';
-import './Home.css';
-import './Header.css';
-
-
+import React, { useState, useEffect } from "react";
+import ConnectionProvider from "../backend/dbConnection";
+import Sidebar from "./Sidebar";
+import Header from "./Header";
+import FirstRegister from "./FirstRegister";
+import TableView from "./TableView";
+import "./Home.css";
+import "./Header.css";
+import Login from "./Login";
 
 const Home: React.FC = () => {
   const [data, setData] = useState([]);
   const [count, setCount] = useState<number | null>(null);
-  const [viewTableName, setViewTableName] = useState<string | null>(null);
+  const [viewTableName, setViewTableName] = useState<string | null>(
+    "BASEAGOSTO2"
+  );
+  const [loggedIn, setLoogedIn] = useState(false);
 
-  //const data [] = {}, ]; 
-  
+  //const data [] = {}, ];
+
   useEffect(() => {
     fetch("/api/usersNb", {
       method: "GET",
-      headers: {'Content-Type': "application/json"}
-    })
-    .then(res => res.json()
-    .then(body => setCount(body.usersnb)));
-    
-    
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => res.json().then((body) => setCount(body.usersnb)));
   }, []);
-
-    
- 
-
 
   return (
     <>
       {count === null && "Error"}
-      {count === 0 && 
-      (
+      {count === 0 && (
         <div>
           <FirstRegister setUsersCount={setCount} />
         </div>
       )}
-      {count !== null && count > 0 && 
-      ( <div>
-          <div>
-          <Sidebar />
-          </div>
+      {!loggedIn && count !== null && count > 0 && (
+        <div>
+          <Login />
+        </div>
+      )}
 
-          <div>
+      {loggedIn && count !== null && count > 0 && (
+        <div
+          style={{ display: "flex", flexDirection: "column" }}
+          className="home-container"
+        >
+          <Header />
+          <Sidebar selectedRow={null} />
+          <div className="content">
             <TableView tableName={viewTableName} />
           </div>
+        </div>
+      )}
 
-          <div className="content">
-           <Header />
-          </div>
-
-          
-        </div>)}
     </>
   );
-    /*
+  /*
       <Sidebar />
       <div className="content">
         <Header />
@@ -101,7 +97,6 @@ const Home: React.FC = () => {
     </div>
   );
   */
-
 };
 
 export default Home;
