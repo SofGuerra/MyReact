@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Header.css';
 
 const Header: React.FC = () => {
@@ -6,6 +6,8 @@ const Header: React.FC = () => {
   const [showViewMenu, setShowViewMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [isFilesMenuVisible, setFilesMenuVisible] = useState(false);
+
+const toggle
 
 
   const toggleSettingsMenu = () => {
@@ -36,6 +38,11 @@ const Header: React.FC = () => {
     setShowSaveMenu(false);
   };
 
+useEffect(()=> { 
+  window.addEventListener
+ 
+},
+[])
 
 
   // Handle file selection (for "Add a database")
@@ -51,7 +58,7 @@ const Header: React.FC = () => {
     
     <div className="header">
        <div className="header-buttons">
-        <button onClick={toggleSettingsMenu}>Settings</button>
+        <button onClick={toggleSettingsMenu}>Settings
         {showSettingsMenu && (
           <div className="menu">
           <ul>
@@ -61,8 +68,9 @@ const Header: React.FC = () => {
           </ul>
         </div>
         )}
+        </button>
 
-        <button onClick={toggleViewMenu}>View</button>
+        <button onClick={toggleViewMenu}>View
         {showViewMenu && (
           <div className="menu">
             <ul>
@@ -74,8 +82,9 @@ const Header: React.FC = () => {
           </ul>
           </div>
         )}
+        </button>
 
-        <button onClick={toggleSaveMenu}>Save</button>
+        <button onClick={toggleSaveMenu}>Save
         {showSaveMenu && (
           <div className="menu">
           <ul>
@@ -87,9 +96,9 @@ const Header: React.FC = () => {
           </ul>
         </div>
         )}
-
+      </button>
         {/* New Files Button */}
-        <button className="files-button" onClick={toggleFilesMenu}>Files</button>
+        <button className="files-button" onClick={toggleFilesMenu}>Files
         {isFilesMenuVisible && (
           <div className="menu">
             <ul>
@@ -101,7 +110,7 @@ const Header: React.FC = () => {
             </ul>
           </div>
         )}
-
+        </button>
         {/* Hidden file input to open the file explorer */}
         <input
           type="file"

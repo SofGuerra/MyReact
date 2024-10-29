@@ -52,10 +52,10 @@
 
 .menu {
   position: fixed; /* Position relative to the header */
-    top: 22.4%; 
-    left: 50%;
+    /* top: 22.4%; 
+    left: 50%; */
     padding: 7px;
-    transform: translate(-60%, -50%);
+    /* transform: translate(-60%, -50%); */
     color: rgb(0, 0, 0); /* Text color */
     background-color: white; /* Background for popups */
     border: 1px solid #ddd; /* Light border */
