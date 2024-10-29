@@ -15,6 +15,10 @@ import ConnectionProvider from './dbConnection.ts'
 import { TableHeaders } from '../TableHeaders.tsx';
 import validations from '../validations.tsx';
 
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -33,31 +37,44 @@ app.use(cors({
 }));
 
 
+function signToken(username: string) {
 
+  const secret_key = process.env.REACT_APP_WEBTOKEN_ENCRYPTION_KEY;
+  if (!secret_key) {
+    throw new Error('Cannot find webtoken secret key in the environment');
+  }
+  return jwt.sign({ username: username }, secret_key, { expiresIn: "7d" });
+}
 
-app.get('/api/auth', (req, res) => {
+function veryfyToken(token: string | undefined) : string | null {
+  if (!token) {
+    return null;
+  }
+  const secret_key = process.env.REACT_APP_WEBTOKEN_ENCRYPTION_KEY;
+  if (!secret_key) {
+    throw new Error('Cannot find webtoken secret key in the environment');
+  }
+  let result = jwt.verify(token, secret_key);
+  return (result as any).username;
+}
+
+app.post('/api/auth', async (req, res) => {
+  console.log("Auth request");
   try {
-    // not don yet
-    //const user
+    let userData = await ConnectionProvider.GetUserData(req.body.username);
 
-    const secret_key = process.env.WEBTOKEN_ENCRYPTION_KEY;
-
-    if (!secret_key) {
-      throw new Error('Cannot find webtoken secret key in the environment');
+    if (userData == null) {
+      res.status(401).json({ message: "Invalid username or password" });
+      return;
     }
-
-    const signedToken = jwt.sign({ username: "UsernameSofia" }, secret_key, { expiresIn: "30m" })
-
-    //im happy
-
-    jwt.verify(signedToken, secret_key, (err, user) => {
-
-      console.debug("Decoded: " + err + " " + JSON.stringify(user));
-
-    });
-
-    res.json({ message: signedToken });
-
+    const hashedPassword = await bcrypt.hash(req.body.password, userData.passwordSalt);
+    if (hashedPassword != userData.hashed_password) {
+      res.status(401).json({ message: "Invalid username or password" });
+      return;
+    }
+    // user is authorised now
+    const signedToken = signToken(userData.username);
+    res.json({ token: signedToken });
   } catch (err) {
     console.error(err);
   }
@@ -75,7 +92,8 @@ app.post("/api/firstReg", async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       await ConnectionProvider.createUser(displayName, username, hashedPassword, salt, "ADMIN");
-      res.json({ success: true });
+      const signedToken = signToken(username);
+      res.json({ success: true, token: signedToken });
     } else {
       res.json({ success: false });
     }
@@ -86,6 +104,10 @@ app.post("/api/firstReg", async (req, res) => {
 
 app.post("/api/getData", async (req, res) => {
   try {
+    let username = veryfyToken(req.headers.authorization);
+    if (!username) {
+      return;
+    }
     if (req.body == null) {
       res.status(400);
       return;
@@ -130,6 +152,11 @@ app.get("/api/usersNb", (req, res) => {
 
 app.post("/api/userTableHeaders", (req, res) => {
   try {
+    let username = veryfyToken(req.headers.authorization);
+    if (!username) {
+      return;
+    }
+
     const tableName = req.body.tableName as string;
     if (tableName == null || Validations.validateTableName(tableName) != "") {
       res.status(400).json({ error: "Invalid table name" });

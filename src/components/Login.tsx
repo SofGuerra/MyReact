@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
 import Validations from "../validations";
+import Cookies from "js-cookie";
 
-const Login: React.FC = () => {
+interface LoginProps {
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean | null>>;
+}
+
+const Login: React.FC<LoginProps> = ({ setLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -37,9 +42,13 @@ const Login: React.FC = () => {
       body: JSON.stringify({ username: username, password: password }),
     }).then((res) =>
       res.json().then((body) => {
-        if (body.success) {
+        if (body.token) {
+          setLoggedIn(true);
+          Cookies.set("token", body.token, {
+            expires: 7,
+          });
         } else {
-          setErrorMessage(body.message || "Failed to register");
+          setErrorMessage(body.message || "Invalid username or password");
         }
       })
     );

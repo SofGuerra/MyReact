@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './Header.css';
+import ManageUsers from './ManageUsers';
 
 const Header: React.FC = () => {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showViewMenu, setShowViewMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [isFilesMenuVisible, setFilesMenuVisible] = useState(false);
+  const [manageUsersPopup, setManageUsersPopup] = useState(false);
 
 
 
@@ -37,6 +39,11 @@ const Header: React.FC = () => {
     setShowSaveMenu(false);
   };
 
+  const toggleManageUsersPopup = () => {
+    setManageUsersPopup(!manageUsersPopup);
+
+  }
+
 useEffect(()=> { 
   window.addEventListener
  
@@ -54,7 +61,7 @@ useEffect(()=> {
   };
 
   return (
-    
+    <div>
     <div className="header">
        <div className="header-buttons">
         <button onClick={toggleSettingsMenu}>Settings
@@ -64,6 +71,8 @@ useEffect(()=> {
           <li>View all users</li>
           <hr></hr>
           <li>More options...</li>
+          <hr></hr>
+          <li onClick={toggleManageUsersPopup}>Manage users</li>
           </ul>
         </div>
         )}
@@ -122,6 +131,13 @@ useEffect(()=> {
 
       <button className="login-button" onClick={() => {}}>Profile</button>
       
+    </div>
+
+    {manageUsersPopup && (
+      <div>
+        <ManageUsers />
+        </div>
+    )}
     </div>
   );
 };

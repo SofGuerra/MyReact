@@ -2,8 +2,8 @@ import "./TableView.css";
 import { useEffect, useState } from "react";
 import { TableHeaders } from "../TableHeaders";
 import DataTable from "react-data-table-component";
-import Validations from "../validations.tsx";
 import validations from "../validations.tsx";
+import Cookies from "js-cookie";
 
 interface TableViewProps {
   tableName: string | null;
@@ -23,9 +23,14 @@ const TableView: React.FC<TableViewProps> = ({ tableName }) => {
       return;
     }
 
+    const token = Cookies.get("token");
+
+    if (!token) return;
+
     fetch("/api/userTableHeaders", {
       method: "POST",
       headers: {
+        Authorization: token,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ tableName: tableName }),
@@ -81,11 +86,16 @@ const TableView: React.FC<TableViewProps> = ({ tableName }) => {
       });
     });
 
+    const token = Cookies.get("token");
+
+    if (!token) return;
+
     // Set the columns state
     setViewColumns(columns);
     fetch("/api/getData", {
       method: "POST",
       headers: {
+        Authorization: token,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

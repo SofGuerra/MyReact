@@ -7,6 +7,7 @@ import TableView from "./TableView";
 import "./Home.css";
 import "./Header.css";
 import Login from "./Login";
+import Cookies from "js-cookie";
 
 const Home: React.FC = () => {
   const [data, setData] = useState([]);
@@ -14,9 +15,16 @@ const Home: React.FC = () => {
   const [viewTableName, setViewTableName] = useState<string | null>(
     "BASEAGOSTO2"
   );
-  const [loggedIn, setLoogedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
 
   //const data [] = {}, ];
+
+  // Check if the token is still present
+  useEffect(() => {
+    if (Cookies.get("token")) {
+      setLoggedIn(true);
+    }
+  });
 
   useEffect(() => {
     fetch("/api/usersNb", {
@@ -35,7 +43,7 @@ const Home: React.FC = () => {
       )}
       {!loggedIn && count !== null && count > 0 && (
         <div>
-          <Login />
+          <Login setLoggedIn={setLoggedIn} />
         </div>
       )}
 
@@ -51,7 +59,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       )}
-
     </>
   );
   /*

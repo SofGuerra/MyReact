@@ -3,6 +3,36 @@ import * as fs from 'fs';
 import { ColumnHeaders, TableHeaders } from '../TableHeaders';
 import validations from '../validations';
 
+class UserData {
+    // Properties based on the table schema
+    name: string;
+    username: string;
+    hashed_password?: string;        // Optional since it can be undefined
+    passwordSalt: string;    // Optional since it can be undefined
+    type: 'ADMIN' | 'NORMAL'; // Union type for predefined roles
+
+    constructor(
+        name: string,
+        username: string,
+        type: 'ADMIN' | 'NORMAL',
+        hashed_password: string,
+        passwordSalt: string
+    ) {
+        // Validation to ensure constraints are met
+        if (!name) throw new Error('Name cannot be empty or null');
+        if (!username) throw new Error('Username cannot be empty or null');
+        if (!type) throw new Error('Type cannot be empty or null');
+        if (type !== 'ADMIN' && type !== 'NORMAL') throw new Error('Type must be either ADMIN or NORMAL');
+
+        this.name = name;
+        this.username = username;
+        this.type = type;
+        this.hashed_password = hashed_password;
+        this.passwordSalt = passwordSalt;
+    }
+
+    // Optional: Add methods for user data management, e.g., to update or validate user details.
+}
 
 const config = {
     user: 'sa',
@@ -160,6 +190,7 @@ class ConnectionProvider {
     }
 
     public async GetUserTableHeaders(tableName : string) : Promise<any> {
+        if (! await this.createConnectionIfNotExists()) return null;
         if (validations.validateTableName(tableName) != "") {
             throw new InvalidArgumentException(`Tried to create a table with name '${tableName}' in the database layer `);
         };
@@ -187,7 +218,7 @@ class ConnectionProvider {
     }
 
     public async GetDataFromUserTable(tableName: string, columnsNames: string[]) : Promise<any> {
-
+        if (! await this.createConnectionIfNotExists()) return null;
         try {
             
             if (validations.validateTableName(tableName) != "") {
@@ -221,6 +252,22 @@ class ConnectionProvider {
         }
     }
 
+    public async GetUserData(username: string) : Promise<UserData | null> {
+        if (! await this.createConnectionIfNotExists()) return null;
+        try {
+            if (validations.validateUsername(username) != "")
+            {
+                return null;            
+            }
+            const result1 = await this.connection?.query(`SELECT name, username, password, password_salt, type FROM users WHERE username = '${username}';`);
+            const result = result1?.recordset[0];
+            return new UserData(result.name, result.username, result.type, result.password, result.password_salt);
+        } catch (err) {
+            console.log(`${new Date().toLocaleString()} | Cannot get user data of the user '${username}' from the database.`);
+            console.log(err);
+            return null;
+        }
+    }
 
 }
 
