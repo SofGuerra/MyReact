@@ -135,7 +135,7 @@ useEffect(()=> {
 
     {manageUsersPopup && (
       <div>
-        <ManageUsers />
+        <ManageUsers setShown={setManageUsersPopup} />
         </div>
     )}
     </div>

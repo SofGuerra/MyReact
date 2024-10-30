@@ -178,6 +178,26 @@ app.post("/api/userTableHeaders", (req, res) => {
 
 });
 
+app.get("/api/agents" , async (req, res) => {
+  try {
+    let username = veryfyToken(req.headers.authorization);
+    if (!username) {
+      res.status(401);
+      return;
+    }
+    if (! await ConnectionProvider.HasAdminPermissions(username)) {
+      res.status(403);
+      return;
+    }
+    
+    let agents = await ConnectionProvider.GetAgents();
+    res.json({ agents: agents });
+  } catch (err) {
+    res.status(401);
+    console.error(err);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

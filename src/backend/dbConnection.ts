@@ -269,6 +269,38 @@ class ConnectionProvider {
         }
     }
 
+    public async HasAdminPermissions(username: string) : Promise<boolean> {
+        if (! await this.createConnectionIfNotExists()) return false;
+        try {
+            if (validations.validateUsername(username) != "")
+            {
+                return false;
+            }
+            const result = await this.connection?.query(`SELECT * FROM users WHERE username = '${username}' AND type = 'admin';`);
+            if (result?.recordset) {
+                return result?.recordset.length > 0;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            console.log(`${new Date().toLocaleString()} | Cannot get user data of the user '${username}' from the database.`);
+            console.log(err);
+            return false;
+        }
+    }
+
+    public async GetAgents() : Promise<any> {
+        if (! await this.createConnectionIfNotExists()) return null;
+        try {
+            const result = await this.connection?.query(`SELECT name, username, type FROM users;`);
+            return result?.recordset || [];
+        } catch (err) {
+            console.log(`${new Date().toLocaleString()} | Cannot get agents from the database.`);
+            console.log(err);
+            return null;
+        }
+    }
+
 }
 
 export default ConnectionProvider.instance
