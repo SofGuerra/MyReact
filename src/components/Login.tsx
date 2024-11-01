@@ -5,9 +5,10 @@ import Cookies from "js-cookie";
 
 interface LoginProps {
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean | null>>;
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Login: React.FC<LoginProps> = ({ setLoggedIn }) => {
+const Login: React.FC<LoginProps> = ({ setLoggedIn, setIsAdmin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -47,6 +48,7 @@ const Login: React.FC<LoginProps> = ({ setLoggedIn }) => {
           Cookies.set("token", body.token, {
             expires: 7,
           });
+          setIsAdmin(body.isAdmin);
         } else {
           setErrorMessage(body.message || "Invalid username or password");
         }

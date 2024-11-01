@@ -4,7 +4,7 @@
   background-color: #828b8e; 
   color: rgb(234, 234, 234); 
   padding: 15px; 
-  position: fixed; 
+  position: relative; 
   top: 22px; 
   resize: horizontal;
 }
@@ -14,8 +14,4 @@
     display: flex; /* Flex container */
   }
   
-  .content {
-    margin-left: 220px; /* Margin to prevent overlap with sidebar */
-    padding: 20px; /* Some padding for content */
-  }
   

@@ -5,9 +5,10 @@ import Cookies from "js-cookie";
 
 interface LoginProps {
   setUsersCount: React.Dispatch<React.SetStateAction<number | null>>; // Adjust type if count is not a number
+  setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const FirstRegister: React.FC<LoginProps> = ({ setUsersCount }) => {
+const FirstRegister: React.FC<LoginProps> = ({ setUsersCount, setIsAdmin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -39,7 +40,7 @@ const FirstRegister: React.FC<LoginProps> = ({ setUsersCount }) => {
       return;
     }
 
-    fetch("/api/firstReg", {
+    fetch("/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -47,9 +48,10 @@ const FirstRegister: React.FC<LoginProps> = ({ setUsersCount }) => {
       body: JSON.stringify({ username: username, password: password }),
     }).then((res) =>
       res.json().then((body) => {
-        if (body.success) {
+        if (body.token) {
           setUsersCount(1);
           Cookies.set("token", body.token, { expires: 7 });
+          setIsAdmin(true);
         } else {
           setErrorMessage(body.message || "Failed to register");
         }

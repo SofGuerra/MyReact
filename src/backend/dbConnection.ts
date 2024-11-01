@@ -140,7 +140,6 @@ class ConnectionProvider {
         if (! await this.createConnectionIfNotExists()) return;
                 
         try {
-
             await this.connection?.query("INSERT INTO USERS ([name], [username], [password], [password_salt], [type]) "
                 +   `values ('${name}', '${username}', '${hashedPassword}', '${passwordSalt}', '${type}')`
                 );
@@ -177,6 +176,9 @@ class ConnectionProvider {
         }
     }
     
+
+
+
     public async fetchCastigoData(): Promise<any[]> {
         if (!await this.createConnectionIfNotExists()) return [];
 
@@ -260,10 +262,33 @@ class ConnectionProvider {
                 return null;            
             }
             const result1 = await this.connection?.query(`SELECT name, username, password, password_salt, type FROM users WHERE username = '${username}';`);
+            if (result1?.recordset.length == 0) {
+                return null;
+            }
             const result = result1?.recordset[0];
             return new UserData(result.name, result.username, result.type, result.password, result.password_salt);
         } catch (err) {
             console.log(`${new Date().toLocaleString()} | Cannot get user data of the user '${username}' from the database.`);
+            console.log(err);
+            return null;
+        }
+    }
+
+    public async GetUserByDisplayName(displayName: string) : Promise<UserData | null> {
+        if (! await this.createConnectionIfNotExists()) return null;
+        try {
+            if (validations.validateName(displayName) != "")
+            {
+                return null;            
+            }
+            const result1 = await this.connection?.query(`SELECT name, username, password, password_salt, type FROM users WHERE name = '${displayName}';`);
+            if (result1?.recordset.length == 0) {
+                return null;
+            }
+            const result = result1?.recordset[0];
+            return new UserData(result.name, result.username, result.type, result.password, result.password_salt);
+        } catch (err) {
+            console.log(`${new Date().toLocaleString()} | Cannot get user data of the user '${displayName}' from the database.`);
             console.log(err);
             return null;
         }
@@ -298,6 +323,51 @@ class ConnectionProvider {
             console.log(`${new Date().toLocaleString()} | Cannot get agents from the database.`);
             console.log(err);
             return null;
+        }
+    }
+
+    public async RemoveAgents(agents: string[]) : Promise<boolean> { 
+        if (! await this.createConnectionIfNotExists()) return false;
+        // validate
+        for (let agent of agents) {
+            if (validations.validateUsername(agent) != "") {
+                return false;
+            }
+        }
+        // compose all agents usernames into one string of format: `'username1', 'username2', 'username3'`
+        let usernames = agents.map(a => `'${a}'`).join(", ");
+        try {
+            const result = await this.connection?.query(`DELETE FROM users WHERE username IN (${usernames});`);
+            return true;
+        } catch (err) {
+            console.log(`${new Date().toLocaleString()} | Cannot remove agents from the database.`);
+            console.log(err);
+            return false;
+        }
+    }
+
+    public async UpdateAgent(oldUsername: string, newUsername: string, newName: string, newType: string) : Promise<boolean> {
+        if (! await this.createConnectionIfNotExists()) return false;
+        // validate
+        if (validations.validateUsername(oldUsername) != "") {
+            return false;
+        }
+        if (validations.validateUsername(newUsername) != "") {
+            return false;
+        }
+        if (validations.validateName(newName) != "") {
+            return false;
+        }
+        if (validations.validateUserType(newType) != "") {
+            return false;
+        }
+        try {
+            const result = await this.connection?.query(`UPDATE users SET username = '${newUsername}', name = '${newName}', type = '${newType}' WHERE username = '${oldUsername}';`);
+            return true;
+        } catch (err) {
+            console.log(`${new Date().toLocaleString()} | Cannot update agent '${oldUsername}' in the database.`);
+            console.log(err);
+            return false;
         }
     }
 

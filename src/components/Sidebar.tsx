@@ -15,7 +15,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedRow }) => {
 
   const onDivMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     let distanceToRightEdge = event.currentTarget.clientLeft + event.currentTarget.clientWidth - event.clientX;
-    if (distanceToRightEdge < 10) {
+    if (distanceToRightEdge < 20) {
       event.currentTarget.style.cursor = 'ew-resize';
       canDragRef.current = true;
     } else {
@@ -41,9 +41,10 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedRow }) => {
 
   const onMouseMove = (event: MouseEvent) => {
     if (sidebarRef.current && isDragging.current) {
-      const newWidth = event.clientX - sidebarRef.current.getBoundingClientRect().left;
+      const newWidth = event.clientX - sidebarRef.current.getBoundingClientRect().left + 10;
       if (newWidth >= minWidth && newWidth <= maxWidth) {
-        sidebarRef.current.style.width = newWidth + 'px';
+        sidebarRef.current.style.minWidth = newWidth + 'px';
+        sidebarRef.current.style.maxWidth = newWidth + 'px';
       }
     }
   };

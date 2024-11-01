@@ -5,7 +5,6 @@ import Header from "./Header";
 import FirstRegister from "./FirstRegister";
 import TableView from "./TableView";
 import "./Home.css";
-import "./Header.css";
 import Login from "./Login";
 import Cookies from "js-cookie";
 
@@ -16,13 +15,31 @@ const Home: React.FC = () => {
     "BASEAGOSTO2"
   );
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [loggedInUsername, setLoggedInUsername] = useState("");
+  const [loggedInName, setLoggedInName] = useState("");
 
   //const data [] = {}, ];
 
   // Check if the token is still present
+
+
   useEffect(() => {
-    if (Cookies.get("token")) {
-      setLoggedIn(true);
+    const token = Cookies.get("token");
+    if (token)
+    {
+    setLoggedIn(true);
+    fetch("/api/status", {
+      method: "GET",
+      headers: { "Content-Type": "application/json", Authorization: token }
+    })
+    .then((res) => res.json()
+    .then((body) => 
+      {
+        setIsAdmin(body.isAdmin);
+        setLoggedInUsername(body.username);
+        setLoggedInName(body.name);
+      }));
     }
   });
 
@@ -38,24 +55,23 @@ const Home: React.FC = () => {
       {count === null && "Error"}
       {count === 0 && (
         <div>
-          <FirstRegister setUsersCount={setCount} />
+          <FirstRegister setUsersCount={setCount} setIsAdmin={setIsAdmin} />
         </div>
       )}
       {!loggedIn && count !== null && count > 0 && (
         <div>
-          <Login setLoggedIn={setLoggedIn} />
+          <Login setLoggedIn={setLoggedIn} setIsAdmin={setIsAdmin} />
         </div>
       )}
 
       {loggedIn && count !== null && count > 0 && (
-        <div
-          style={{ display: "flex", flexDirection: "column" }}
-          className="home-container"
-        >
-          <Header />
-          <Sidebar selectedRow={null} />
-          <div className="content">
+        <div style={{ display: "flex", flexDirection: "column" }} className="home-container">
+          <Header onLogOut={() => setLoggedIn(false)} isAdmin={isAdmin} name={loggedInName}/>
+          <div style = {{display: "flex", flex: 1}}>
+            <Sidebar selectedRow={null} />
+            <div className="content">
             <TableView tableName={viewTableName} />
+          </div>
           </div>
         </div>
       )}

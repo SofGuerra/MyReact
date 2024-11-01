@@ -58,6 +58,21 @@ function veryfyToken(token: string | undefined) : string | null {
   return (result as any).username;
 }
 
+app.get('/api/status', async (req, res) => {
+  try {
+    const username = veryfyToken(req.headers.authorization);
+    if (username == null) {
+      res.json({ isAdmin: false });
+      return;
+    }
+    let userData = await ConnectionProvider.GetUserData(username);
+    res.json({ isAdmin: userData?.type == "ADMIN", username: username, name: userData?.name });
+  } catch (err) {
+    res.status(500);
+    console.error(err);
+  }
+})
+
 app.post('/api/auth', async (req, res) => {
   console.log("Auth request");
   try {
@@ -74,31 +89,76 @@ app.post('/api/auth', async (req, res) => {
     }
     // user is authorised now
     const signedToken = signToken(userData.username);
-    res.json({ token: signedToken });
+    res.json({ token: signedToken, isAdmin: userData.type.toUpperCase() == "ADMIN" });
   } catch (err) {
     console.error(err);
   }
 });
 
+async function createUser(name: string, username: string, password: string, type: "ADMIN" | "NORMAL") : Promise<string | null> {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  await ConnectionProvider.createUser(name, username, hashedPassword, salt, type);
+  const signedToken = signToken(username);
+  return signedToken;
+}
 
-
-app.post("/api/firstReg", async (req, res) => {
+app.post("/api/register", async (req, res) => {
   try {
+    let username = req.body.username;
+    let password = req.body.password;
+    let type = req.body.type;
+    let name = req.body.name;
     const userCount = await ConnectionProvider.GetNumberOfUsers();
     if (userCount == 0) {
-      const username = req.body.username;
-      const password = req.body.password;
-      const displayName = "admin";
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      await ConnectionProvider.createUser(displayName, username, hashedPassword, salt, "ADMIN");
-      const signedToken = signToken(username);
-      res.json({ success: true, token: signedToken });
+      type = "ADMIN";
+      name = username;
     } else {
-      res.json({ success: false });
+      const request_username = veryfyToken(req.headers.authorization);
+      if (request_username == null) {
+        res.sendStatus(403);
+        return;
+      }
+      if (!await ConnectionProvider.HasAdminPermissions(request_username)) {
+        res.sendStatus(403);
+        return;
+      }
     }
+
+    // check if the user already exists
+    let userData = await ConnectionProvider.GetUserData(username);
+    if (userData != null) {
+      res.sendStatus(409);
+      console.debug("User with username " + username + " already exists");
+      return;
+    }
+    console.debug("User with username " + username + " does not exist");
+
+    // check if the user already exists
+    userData = await ConnectionProvider.GetUserByDisplayName(name);
+    if (userData != null) {
+      res.sendStatus(409);
+      console.debug("User with name " + name + " already exists");
+      return;
+    }
+    console.debug("User with name " + name + " does not exist");
+
+    if (
+      validations.validateName(name) != "" ||
+      validations.validatePassword(password) != "" ||
+      validations.validateUsername(username) != "" ||
+      validations.validateUserType(type) != ""
+    )
+    {
+      res.sendStatus(409);
+      return;
+    }
+
+    const signedToken = await createUser(name, username, password, type);
+    res.json({token: signedToken });
   } catch (err) {
     console.error(err);
+    res.status(500);
   }
 });
 
@@ -135,6 +195,7 @@ app.post("/api/getData", async (req, res) => {
 
   } catch (err) {
     console.error(err);
+    res.status(500);
   }
 
 });
@@ -197,6 +258,99 @@ app.get("/api/agents" , async (req, res) => {
     console.error(err);
   }
 });
+
+app.post("/api/removeAgents", async (req, res) => {
+  try {
+    let username = veryfyToken(req.headers.authorization);
+    if (!username) {
+      res.status(401);
+      return;
+    } 
+    if (! await ConnectionProvider.HasAdminPermissions(username)) {
+      res.status(403);
+      return;
+    }
+
+    if (req.body == null) {
+      res.status(400).json({ error: "Body is empty" });
+      return;
+    }
+    if (!Array.isArray(req.body.agents)) {
+      res.status(400).json({ error: "Invalid agents array" });
+      return;
+    }
+
+    // validate agents (all valid string usernames)
+    for (let agent of req.body.agents) {
+      if (Validations.validateUsername(agent) != "") {
+        res.status(400).json({ error: "Invalid agent username: " + agent });
+        return;
+      }
+    }
+
+    let agents = req.body.agents;
+    let success = await ConnectionProvider.RemoveAgents(agents);
+
+    if (success) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(500);
+    }
+  } catch (err) {
+    res.status(500);
+    console.error(err);
+  }
+});
+
+app.post("/api/updateAgent", async (req, res) => {
+  try {
+    let username = veryfyToken(req.headers.authorization);
+    if (!username) {
+      res.status(401);
+      return;
+    } 
+    if (! await ConnectionProvider.HasAdminPermissions(username)) {
+      res.status(403);
+      return;
+    }
+
+    if (req.body == null) {
+      res.status(400).json({ error: "Body is empty" });
+      return;
+    }
+    if (Validations.validateUsername(req.body.oldUsername) != "") {
+      res.status(400).json({ error: "Invalid agent username: " + req.body.oldUsername });
+      return;
+    }
+    if (Validations.validateUsername(req.body.newUsername) != "") {
+      res.status(400).json({ error: "Invalid agent username: " + req.body.newUsername });
+      return;
+    }
+    if (Validations.validateName(req.body.newName) != "") {
+      res.status(400).json({ error: "Invalid agent name: " + req.body.newName });
+      return;
+    }
+    if (Validations.validateUserType(req.body.newType) != "") {
+      res.status(400).json({ error: "Invalid agent type: " + req.body.newType });
+      return;
+    }
+    const result = await ConnectionProvider.UpdateAgent(
+      req.body.oldUsername,
+      req.body.newUsername,
+      req.body.newName,
+      req.body.newType)
+
+    if (result) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(500);
+    }
+  } catch (err) {
+    res.status(500);
+    console.error(err);
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

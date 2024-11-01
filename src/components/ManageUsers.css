@@ -1,0 +1,32 @@
+
+.manage-users-save-cancel{}
+
+.button-mu {
+    /*margin-right: 10px;*/
+    margin-left: 15px;
+    margin-bottom: 5px;
+    background-color: #b1b1b1;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;  
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+
+
+  }
+  
+  .button-mu:hover {
+    background-color: #a5a5a5;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 10px;
+  }
+
+  .error {
+    margin-bottom: 10px;
+  }

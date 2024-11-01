@@ -1,5 +1,6 @@
 table {
     width: 100%;
+  
     border-collapse: collapse;
   }
   
@@ -12,11 +13,9 @@ table {
   th {
     background-color: #e1e1e1;
   }
-  .content {
-    flex-grow: 1;
-    padding: 20px; 
-    background-color: pink;/* TEMPORAL */
-  }
+.content {
+  background-color: pink;/* TEMPORAL */
+}
   body{
     font-size: medium ;
   }

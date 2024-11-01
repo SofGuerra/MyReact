@@ -1,4 +1,7 @@
-function validateUsername(username: string): string {
+function validateUsername(username: any): string {
+  if  (typeof username != "string") {
+    return "Username has to be a string";
+  }
   // Check length
   if (username.length < 4) {
     return "Username has to be at least 4 symbols.";
@@ -95,10 +98,44 @@ function validateUserColumnName(columnName: string): string {
   return ""; // Return empty string if all validations pass
 }
 
+function validateName(name: string): string {
+  if (name.length < 1) {
+    return "Name has to be at least 1 symbol";
+  }
+  if (name.length > 64) {
+    return "Name cannot exceed 64 symbols";
+  }
+  const validPattern = /^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ ]+$/;
+  if (!validPattern.test(name)) {
+    return "Name can only contain letters, spaces, numbers, and underscores";
+  }
+  return "";
+}
+
+function validateUserType(userType: string): string {
+  if (userType != "ADMIN" && userType != "NORMAL") {
+    return "User type must be 'admin' or 'normal'";
+  }
+  return "";
+}
+
+function validateUniqueChange(allOldUniqueStrings: string[], oldString: string, newString: string): string {
+  if (newString === oldString) {
+    return "";
+  }
+  if (allOldUniqueStrings.includes(newString)) {
+    return "Username already exists";
+  }
+  return "";
+}
+
 export default {
   validateUsername: validateUsername,
   validatePassword: validatePassword,
   validateTableName: validateTableName,
   validateUserColumnType: validateUserColumnType,
   validateUserColumnName: validateUserColumnName,
-};
+  validateName: validateName,
+  validateUserType: validateUserType,
+  validateUniqueChange: validateUniqueChange
+}

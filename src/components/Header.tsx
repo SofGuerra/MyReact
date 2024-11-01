@@ -1,21 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import './Header.css';
+import Cookies from 'js-cookie';  
 import ManageUsers from './ManageUsers';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onLogOut: () => void;
+  isAdmin: boolean;
+  name: string
+} 
+
+const Header: React.FC <HeaderProps>= ({onLogOut, isAdmin, name}) => {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showViewMenu, setShowViewMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [isFilesMenuVisible, setFilesMenuVisible] = useState(false);
+  const [isProfileMenuVisible, setProfileMenuVisible] = useState(false);
   const [manageUsersPopup, setManageUsersPopup] = useState(false);
 
-
+let logOut = () => {
+  Cookies.remove("token");
+  onLogOut();
+}
 
   const toggleSettingsMenu = () => {
     setShowSettingsMenu((prev) => !prev);
     setShowViewMenu(false);
     setShowSaveMenu(false);
     setFilesMenuVisible(false);
+    setProfileMenuVisible(false);
+    console.log("Is admin:" + isAdmin);
   };
 
   const toggleViewMenu = () => {
@@ -23,6 +36,7 @@ const Header: React.FC = () => {
     setShowSettingsMenu(false);
     setShowSaveMenu(false);
     setFilesMenuVisible(false);
+    setProfileMenuVisible(false);
   };
 
   const toggleSaveMenu = () => {
@@ -30,6 +44,7 @@ const Header: React.FC = () => {
     setShowSettingsMenu(false);
     setShowViewMenu(false);
     setFilesMenuVisible(false);
+    setProfileMenuVisible(false);
   };
 
   const toggleFilesMenu = () => {
@@ -37,19 +52,21 @@ const Header: React.FC = () => {
     setShowSettingsMenu(false);
     setShowViewMenu(false);
     setShowSaveMenu(false);
+    setProfileMenuVisible(false);
+  };
+
+  const toggleProfileMenu = () => {
+    setProfileMenuVisible((prev) => !prev);
+    setShowSettingsMenu(false);
+    setShowViewMenu(false);
+    setShowSaveMenu(false);
+    setFilesMenuVisible(false);
   };
 
   const toggleManageUsersPopup = () => {
     setManageUsersPopup(!manageUsersPopup);
 
   }
-
-useEffect(()=> { 
-  window.addEventListener
- 
-},
-[])
-
 
   // Handle file selection (for "Add a database")
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,8 +88,12 @@ useEffect(()=> {
           <li>View all users</li>
           <hr></hr>
           <li>More options...</li>
-          <hr></hr>
-          <li onClick={toggleManageUsersPopup}>Manage users</li>
+          {isAdmin && (
+            <div>
+              <hr></hr>
+              <li onClick={toggleManageUsersPopup}>Manage users</li>
+              </div>
+          )}
           </ul>
         </div>
         )}
@@ -129,9 +150,23 @@ useEffect(()=> {
 
       </div>
 
-      <button className="login-button" onClick={() => {}}>Profile</button>
-      
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <h6 style={{ marginRight: '10px', height: '100%', textAlign: 'center', fontWeight: 'lighter', marginTop: '-12px', marginBottom: '-12px', fontSize: '17px'}}>{name}</h6>
+        <button  onClick={toggleProfileMenu}>Profile
+        {isProfileMenuVisible && (
+            <div className="menu" style={{transform: 'translateX(-100%)'}}>
+              <ul>
+                <li onClick={() => document.getElementById('file-input')?.click()}>View Profile</li>
+                <hr></hr>
+                <li onClick={logOut}>Log out</li>
+              </ul>
+            </div>
+          )}
+        </button>
+      </div>
+
     </div>
+
 
     {manageUsersPopup && (
       <div>
