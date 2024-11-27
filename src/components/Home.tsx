@@ -11,8 +11,8 @@ import Cookies from "js-cookie";
 const Home: React.FC = () => {
   const [data, setData] = useState([]);
   const [count, setCount] = useState<number | null>(null);
-  const [viewTableName, setViewTableName] = useState<string | null>(
-    "BASEAGOSTO2"
+  const [viewTableId, setViewTableId] = useState<number | null>(
+    29
   );
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -66,11 +66,11 @@ const Home: React.FC = () => {
 
       {loggedIn && count !== null && count > 0 && (
         <div style={{ display: "flex", flexDirection: "column" }} className="home-container">
-          <Header onLogOut={() => setLoggedIn(false)} isAdmin={isAdmin} name={loggedInName}/>
+          <Header onLogOut={() => setLoggedIn(false)} isAdmin={isAdmin} name={loggedInName} setCurrentTable={setViewTableId}/>
           <div style = {{display: "flex", flex: 1}}>
-            <Sidebar selectedRow={null} />
+            <Sidebar selectedRow={null} setCurrentTable={setViewTableId} />
             <div className="content">
-            <TableView tableName={viewTableName} />
+            <TableView tableId={viewTableId} />
           </div>
           </div>
         </div>

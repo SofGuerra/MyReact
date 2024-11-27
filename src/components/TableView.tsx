@@ -6,7 +6,7 @@ import validations from "../validations.tsx";
 import Cookies from "js-cookie";
 
 interface TableViewProps {
-  tableName: string | null;
+  tableId: number | null;
 }
 
 function levenshteinDistance(a: string, b: string): number {
@@ -43,8 +43,8 @@ function similarity(a: string, b: string): number {
 }
 
 
-const TableView: React.FC<TableViewProps> = ({ tableName }) => {
-  const [tableHeaders, setTableHeaders] = useState(new TableHeaders(tableName));
+const TableView: React.FC<TableViewProps> = ({ tableId }) => {
+  const [tableHeaders, setTableHeaders] = useState(new TableHeaders(tableId));
   const [viewRows, setViewRows] = useState<any>([]);
   const [rows1, setRows1] = useState<any>([]);
   const [viewColumns, setViewColumns] = useState<any>([]);
@@ -52,15 +52,10 @@ const TableView: React.FC<TableViewProps> = ({ tableName }) => {
 
   // When the tableName changes, fetch headers for that table
   useEffect(() => {
-    let errorMessage1 = validations.validateTableName(tableName);
-    setErrorMessage(errorMessage1);
-    if (errorMessage1 != "") {
-      return;
-    }
-
     const token = Cookies.get("token");
 
     if (!token) return;
+
 
     fetch("/api/userTableHeaders", {
       method: "POST",
@@ -68,13 +63,13 @@ const TableView: React.FC<TableViewProps> = ({ tableName }) => {
         Authorization: token,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ tableName: tableName }),
+      body: JSON.stringify({ tableId: tableId }),
     }).then((res) =>
       res.json().then((body) => {
         setTableHeaders(body.headers);
       })
     );
-  }, [tableName]);
+  }, [tableId]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -86,12 +81,7 @@ const TableView: React.FC<TableViewProps> = ({ tableName }) => {
 
   // When tableHeaders changes, fetch data from the table
   useEffect(() => {
-    let errorMessage1 = validations.validateTableName(tableName);
-    setErrorMessage(errorMessage1);
-    if (errorMessage1 != "") {
-      return;
-    }
-
+    let errorMessage1 = "";
     for (let i = 0; i < tableHeaders.columns.length; i++) {
       errorMessage1 = validations.validateUserColumnName(
         tableHeaders.columns[i].name
@@ -106,23 +96,30 @@ const TableView: React.FC<TableViewProps> = ({ tableName }) => {
 
     //console.log(JSON.stringify(tableHeaders));
     
-    tableHeaders.columns = tableHeaders.columns.filter(item => item.name !== "nit");
-    tableHeaders.columns.unshift({ name: "nit", type: "string" });
     let columns: any = [];
     tableHeaders.columns.forEach((columnHeader) => {
-      columns.push({
+      if (columnHeader.id == null) return;
+      const columnIdAsString = columnHeader.id.toString();
+      const obj = {
         name: columnHeader.name,
-        selector: (row: any) => row[columnHeader.name],
+        selector: (row: any) => row[columnIdAsString],
         sortable: true,
         cell: (row: any) => (
           <input
             type="text"
-            value={row[columnHeader.name]}
-            onChange={(e) => handleInputChange(e, row.id, columnHeader.name)}
+            value={row[columnIdAsString]}
+            onChange={(e) => handleInputChange(e, row.id, columnIdAsString)}
           />
         ),
-      });
+      }
+      if (columnHeader.name == "Managed" || columnHeader.name == "NIT") {
+        columns.unshift(obj);
+        console.log(columnHeader.name);
+      } else {
+        columns.push(obj);
+      }
     });
+
 
     const token = Cookies.get("token");
 
@@ -137,10 +134,10 @@ const TableView: React.FC<TableViewProps> = ({ tableName }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        tableName: tableName,
-        columnsNames: tableHeaders.columns.map((column) => column.name),
+        tableId: tableId,
+        columnsIds: tableHeaders.columns.map((column) => column.id),
       }),
-    }).then((res) => res.json().then((body) => setRows1(body.rows)));
+    }).then((res) => res.json().then((body) => {setRows1(body.rows);}));
   }, [tableHeaders]);
 
   const [nitSearch, setNitSearch] = useState("");
@@ -168,7 +165,7 @@ const TableView: React.FC<TableViewProps> = ({ tableName }) => {
         <div>
           <input type="text" style={{marginBottom: "10px"}} placeholder="Search by Nit" value={nitSearch} onChange={(e) => setNitSearch(e.target.value)} />
           <DataTable
-            title={tableName}
+          title={tableHeaders.tableName}
             columns={viewColumns}
             data={viewRows}
             pagination 

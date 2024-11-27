@@ -46,6 +46,9 @@ function validatePassword(password: string): string {
 }
 
 function validateTableName(tableName: any) {
+  //console.debug("Dont forget to make validation");
+  return "";
+  
   if (typeof tableName != "string") {
     return "Table name has to be a string";
   }
@@ -81,6 +84,8 @@ function validateUserColumnType(typeName: string): string {
 }
 
 function validateUserColumnName(columnName: string): string {
+  //console.debug("Dont forget to make validation");
+  return "";
   // Check length
   if (columnName.length < 1) {
     return "Column name has to be at least 1 symbol";

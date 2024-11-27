@@ -3,6 +3,8 @@ import "./Profile.css"
 
 const Login: React.FC = () => {
     return (
+        
+
       <div>
         <div className = "container">
           <img src="Жоски кот.jpg" alt="Profile Photo" />

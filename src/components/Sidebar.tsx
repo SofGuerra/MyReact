@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Sidebar.css';
+import Cookies from "js-cookie";
 
 interface SidebarProps {
   selectedRow: { id: number; name: string; age: number; occupation: string } | null;
+  setCurrentTable: (n: number) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ selectedRow }) => {
+const Sidebar: React.FC<SidebarProps> = ({ selectedRow, setCurrentTable }) => {
   const isDragging = useRef(false);
   const canDragRef = useRef(false);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const [selectedName, setSelectedName] = useState<string>("");
+  const [options, setOptions] = useState<{ id: number; table_name: string }[]>([]);
 
   const minWidth = 230; // ancho mínimo
   const maxWidth = 320; // ancho máximo
@@ -50,6 +54,21 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedRow }) => {
   };
 
   useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) return;
+    fetch('/api/user-tables', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token
+      }
+    })
+      .then(response => response.json()
+      .then(data => {setOptions(data.tables); console.log(data.tables)}
+      ))
+  }, []);
+
+  useEffect(() => {
     window.addEventListener('mousedown', onMousePress);
     window.addEventListener("mouseup", onMouseRelease);
     window.addEventListener("mousemove", onMouseMove);
@@ -60,6 +79,12 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedRow }) => {
       window.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
+  
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurrentTable(options[parseInt(event.target.value)].id);
+    console.log("Set current table to " + options[parseInt(event.target.value)].id);
+    setSelectedName(event.target.value);
+  };
 
   return (
     <div
@@ -81,6 +106,15 @@ const Sidebar: React.FC<SidebarProps> = ({ selectedRow }) => {
       ) : (
         <p>Select a row to see details.</p>
       )}
+
+<select id="table-select" value={selectedName} onChange={handleChange}>
+        {options.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option.table_name}
+          </option>
+        ))}
+      </select>
+
     </div>
   );
 };

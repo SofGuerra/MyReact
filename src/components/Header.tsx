@@ -2,20 +2,24 @@ import React, { useEffect, useState } from 'react';
 import './Header.css';
 import Cookies from 'js-cookie';  
 import ManageUsers from './ManageUsers';
+import UploadTablePopup from './UploadTablePopup';
 
 interface HeaderProps {
   onLogOut: () => void;
   isAdmin: boolean;
-  name: string
+  name: string;
+  setCurrentTable: (n: number) => void;
 } 
 
-const Header: React.FC <HeaderProps>= ({onLogOut, isAdmin, name}) => {
+const Header: React.FC <HeaderProps>= ({onLogOut, isAdmin, name, setCurrentTable}) => {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showViewMenu, setShowViewMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [isFilesMenuVisible, setFilesMenuVisible] = useState(false);
   const [isProfileMenuVisible, setProfileMenuVisible] = useState(false);
   const [manageUsersPopup, setManageUsersPopup] = useState(false);
+  const [isFileUploadPopupVisible, setFileUploadPopupVisible] = useState(false);
+  const [fileUploadPopupFile, setFileUploadPopupFile] = useState<File>();
 
 let logOut = () => {
   Cookies.remove("token");
@@ -28,7 +32,6 @@ let logOut = () => {
     setShowSaveMenu(false);
     setFilesMenuVisible(false);
     setProfileMenuVisible(false);
-    console.log("Is admin:" + isAdmin);
   };
 
   const toggleViewMenu = () => {
@@ -70,10 +73,11 @@ let logOut = () => {
 
   // Handle file selection (for "Add a database")
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      console.log('File selected:', selectedFile);
-      // Handle file import logic here
+    if (e.target.files && e.target.files.length > 0 && e.target.files[0]) {
+      setFileUploadPopupFile(e.target.files[0]);
+      setFileUploadPopupVisible(true);
+    } else {
+      setFileUploadPopupVisible(false);
     }
   };
 
@@ -145,6 +149,7 @@ let logOut = () => {
           type="file"
           id="file-input"
           style={{ display: 'none' }}
+          accept=".csv"
           onChange={handleFileChange}
         />
 
@@ -171,6 +176,12 @@ let logOut = () => {
     {manageUsersPopup && (
       <div>
         <ManageUsers setShown={setManageUsersPopup} />
+        </div>
+    )}
+
+    {isFileUploadPopupVisible && fileUploadPopupFile && (
+      <div>
+      <UploadTablePopup file={fileUploadPopupFile} setClosedCallback={() => {setFileUploadPopupVisible(false)}} setCurrentTable={setCurrentTable} />
         </div>
     )}
     </div>
